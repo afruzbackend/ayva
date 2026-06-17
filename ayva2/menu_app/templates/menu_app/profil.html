@@ -1,0 +1,43 @@
+{% extends 'menu_app/base.html' %}
+{% block title %}Profil — Ayva{% endblock %}
+
+{% block content %}
+<div class="content">
+    <div class="auth-sahifa" style="max-width:520px;">
+
+        <div class="profil-header">
+            <div class="profil-avatar">{{ user.username|first|upper }}</div>
+            <div>
+                <div class="profil-ism">{{ user.get_full_name|default:user.username }}</div>
+                <div class="profil-username">@{{ user.username }}</div>
+            </div>
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+            {% for field in form %}
+            <div style="margin-bottom:4px;">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.help_text %}
+                <p class="yordam-matn">{{ field.help_text|safe }}</p>
+                {% endif %}
+                {% if field.errors %}
+                <p class="xato-matn">{{ field.errors|striptags }}</p>
+                {% endif %}
+            </div>
+            {% endfor %}
+            <button type="submit" class="submit-btn" style="margin-top:10px;">
+                Saqlash
+            </button>
+        </form>
+
+        <a href="{% url 'menu_app:buyurtmalar_tarixi' %}"
+           class="tolov-btn"
+           style="display:block;margin-top:12px;text-align:center;
+                  background:#f5f5f5;color:#1a1a1a;box-shadow:none;">
+            📋 Buyurtmalarim tarixi
+        </a>
+    </div>
+</div>
+{% endblock %}

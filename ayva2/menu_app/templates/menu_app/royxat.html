@@ -1,0 +1,39 @@
+{% extends 'menu_app/base.html' %}
+{% block title %}Ro'yxatdan o'tish — Ayva{% endblock %}
+
+{% block content %}
+<div class="content">
+    <div class="auth-sahifa">
+        <div style="text-align:center;margin-bottom:28px;">
+            <div style="font-size:36px;margin-bottom:10px;">🎉</div>
+            <h1 style="font-size:22px;font-weight:800;letter-spacing:-.3px;">Ro'yxatdan o'tish</h1>
+            <p style="color:#888;font-size:13px;margin-top:6px;">Yangi akkount yarating</p>
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+            {% for field in form %}
+            <div style="margin-bottom:4px;">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.help_text %}
+                <p class="yordam-matn">{{ field.help_text|safe }}</p>
+                {% endif %}
+                {% if field.errors %}
+                <p class="xato-matn">{{ field.errors|striptags }}</p>
+                {% endif %}
+            </div>
+            {% endfor %}
+
+            <button type="submit" class="submit-btn" style="margin-top:10px;">
+                Ro'yxatdan o'tish
+            </button>
+        </form>
+
+        <p class="auth-link">
+            Akkountingiz bormi?
+            <a href="{% url 'menu_app:login' %}">Kirish</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

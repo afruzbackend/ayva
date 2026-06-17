@@ -1,0 +1,76 @@
+{% extends 'menu_app/base.html' %}
+{% block title %}Savatcha — Ayva{% endblock %}
+
+{% block content %}
+<div class="savatcha-sahifa">
+    <h1 class="sahifa-sarlavha">Savatcha</h1>
+
+    {% if savatcha|length == 0 %}
+    <div class="bosh-savatcha">
+        <div class="emoji">🛒</div>
+        <p>Savatchangiz bo'sh</p>
+        <a href="{% url 'menu_app:menu' %}" class="tolov-btn"
+           style="display:inline-block;width:auto;padding:13px 36px;">
+            Menuga o'tish
+        </a>
+    </div>
+
+    {% else %}
+
+    {% for item in savatcha %}
+    <div class="savatcha-qator">
+        {% if item.mahsulot.rasm %}
+        <img src="{{ item.mahsulot.rasm.url }}"
+             class="savatcha-qator-rasm"
+             alt="{{ item.mahsulot.nomi }}">
+        {% else %}
+        <div class="savatcha-qator-rasm"
+             style="display:flex;align-items:center;justify-content:center;font-size:28px;">
+            🍽
+        </div>
+        {% endif %}
+
+        <div class="savatcha-qator-info">
+            <div class="nomi">{{ item.mahsulot.nomi }}</div>
+            <div class="narx">{{ item.narxi|floatformat:0 }} so'm × {{ item.soni }}</div>
+        </div>
+
+        <div class="miqdor-boshqaruv">
+            <form method="post" action="{% url 'menu_app:savatcha_yangila' item.mahsulot.id %}">
+                {% csrf_token %}
+                <input type="hidden" name="amal" value="kamayt">
+                <button type="submit" class="miqdor-btn">−</button>
+            </form>
+            <span class="miqdor-soni">{{ item.soni }}</span>
+            <form method="post" action="{% url 'menu_app:savatcha_yangila' item.mahsulot.id %}">
+                {% csrf_token %}
+                <input type="hidden" name="amal" value="ortir">
+                <button type="submit" class="miqdor-btn">+</button>
+            </form>
+        </div>
+
+        <div style="font-weight:900;min-width:100px;text-align:right;font-size:15px;color:#111;">
+            {{ item.jami|floatformat:0 }} so'm
+        </div>
+
+        <form method="post" action="{% url 'menu_app:savatcha_yangila' item.mahsulot.id %}">
+            {% csrf_token %}
+            <input type="hidden" name="amal" value="ochir">
+            <button type="submit" class="savatcha-ochir-btn" aria-label="O'chirish">✕</button>
+        </form>
+    </div>
+    {% endfor %}
+
+    <div class="savatcha-jami-blok">
+        <div class="savatcha-jami">
+            <span>Jami:</span>
+            <span>{{ savatcha.jami_narx|floatformat:0 }} so'm</span>
+        </div>
+        <a href="{% url 'menu_app:tolov' %}" class="tolov-btn">
+            To'lovga o'tish →
+        </a>
+    </div>
+
+    {% endif %}
+</div>
+{% endblock %}

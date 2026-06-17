@@ -1,0 +1,132 @@
+{% extends 'menu_app/base.html' %}
+{% block title %}Menu — Ayva{% endblock %}
+
+{% block content %}
+
+<div class="kategoriyalar-wrap">
+    <div class="kategoriyalar">
+        <a href="{% url 'menu_app:menu' %}"
+           class="kategoriya {% if not tanlangan_id and not qidiruv %}aktiv{% endif %}">
+            Barchasi
+        </a>
+        {% for kat in kategoriyalar %}
+        <a href="{% url 'menu_app:menu' %}?kategoriya={{ kat.id }}"
+           class="kategoriya {% if tanlangan_id == kat.id %}aktiv{% endif %}">
+            {% if kat.rasm %}
+            <img src="{{ kat.rasm.url }}" class="kategoriya-icon" alt="{{ kat.nomi }}">
+            {% else %}
+            <span class="kategoriya-icon"
+                  style="display:inline-flex;align-items:center;justify-content:center;font-size:14px;">🍽</span>
+            {% endif %}
+            {{ kat.nomi|upper }}
+        </a>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="content">
+    {% if qidiruv %}
+    <h1 class="sahifa-sarlavha">🔍 "{{ qidiruv }}" natijalar</h1>
+    {% elif tanlangan_id %}
+        {% for kat in kategoriyalar %}
+            {% if kat.id == tanlangan_id %}
+            <h1 class="sahifa-sarlavha">{{ kat.nomi }}</h1>
+            {% endif %}
+        {% endfor %}
+    {% else %}
+    <h1 class="sahifa-sarlavha">Barcha mahsulotlar</h1>
+    {% endif %}
+
+    <div class="mahsulot-grid">
+        {% for m in mahsulotlar %}
+        <div class="mahsulot-karta {% if not m.mavjud or m.soni == 0 %}tugagan{% endif %}">
+            <div class="mahsulot-rasm-wrap">
+                {% if m.rasm %}
+                <img src="{{ m.rasm.url }}" alt="{{ m.nomi }}" loading="lazy">
+                {% else %}
+                <div class="mahsulot-rasm-placeholder">🍽</div>
+                {% endif %}
+
+                {% if not m.mavjud or m.soni == 0 %}
+                <span class="tugagan-belgi">Tugadi</span>
+                {% elif m.soni <= 5 %}
+                <span class="oz-qoldi-belgi">{{ m.soni }} ta qoldi</span>
+                {% endif %}
+
+                {% if m.yangi %}
+                <span class="yangi-belgi">Yangi</span>
+                {% endif %}
+            </div>
+
+            <div class="mahsulot-info">
+                <div class="mahsulot-narx">{{ m.narxi|floatformat:0 }} so'm</div>
+                <div class="mahsulot-nomi">{{ m.nomi }}</div>
+                {% if m.vazni %}
+                <div class="mahsulot-vazni">{{ m.vazni }}</div>
+                {% endif %}
+
+                {% if m.mavjud and m.soni > 0 %}
+                <div class="karta-soni-boshqaruv" id="soni-wrap-{{ m.id }}" style="display:none;">
+                    <button type="button" class="karta-miqdor-btn" onclick="kartaSoniKamayt({{ m.id }})">−</button>
+                    <span class="karta-miqdor-soni" id="karta-soni-{{ m.id }}">1</span>
+                    <button type="button" class="karta-miqdor-btn" onclick="kartaSoniOrtir({{ m.id }}, {{ m.soni }})">+</button>
+                </div>
+                <form method="post" action="{% url 'menu_app:savatchaga_qoshish' m.id %}"
+                      id="karta-form-{{ m.id }}">
+                    {% csrf_token %}
+                    <input type="hidden" name="soni" id="karta-soni-input-{{ m.id }}" value="1">
+                    <button type="button" class="qoshish-btn" id="karta-btn-{{ m.id }}"
+                            onclick="kartaQoshish({{ m.id }})">
+                        + Qo'shish
+                    </button>
+                </form>
+                {% else %}
+                <button class="qoshish-btn" disabled>Mavjud emas</button>
+                {% endif %}
+            </div>
+        </div>
+        {% empty %}
+        <p style="color:#aaa;grid-column:1/-1;padding:60px 0;text-align:center;font-size:15px;">
+            Mahsulotlar topilmadi.
+        </p>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+function kartaQoshish(id) {
+    const wrap = document.getElementById('soni-wrap-' + id);
+    const btn = document.getElementById('karta-btn-' + id);
+    if (wrap.style.display === 'none') {
+        wrap.style.display = 'flex';
+        btn.textContent = '🛒 Savatchaga';
+        btn.classList.add('qoshish-btn-aktiv');
+    } else {
+        document.getElementById('karta-form-' + id).submit();
+    }
+}
+
+function kartaSoniOrtir(id, max) {
+    const el = document.getElementById('karta-soni-' + id);
+    const inp = document.getElementById('karta-soni-input-' + id);
+    let val = parseInt(el.textContent);
+    if (val < max) { val++; el.textContent = val; inp.value = val; }
+}
+
+function kartaSoniKamayt(id) {
+    const el = document.getElementById('karta-soni-' + id);
+    const inp = document.getElementById('karta-soni-input-' + id);
+    const wrap = document.getElementById('soni-wrap-' + id);
+    const btn = document.getElementById('karta-btn-' + id);
+    let val = parseInt(el.textContent);
+    if (val > 1) {
+        val--; el.textContent = val; inp.value = val;
+    } else {
+        wrap.style.display = 'none';
+        btn.textContent = '+ Qo\'shish';
+        btn.classList.remove('qoshish-btn-aktiv');
+        el.textContent = 1; inp.value = 1;
+    }
+}
+</script>
+{% endblock %}

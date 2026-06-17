@@ -1,0 +1,47 @@
+{% extends 'menu_app/base.html' %}
+{% block title %}Kirish — Ayva{% endblock %}
+
+{% block content %}
+<div class="content">
+    <div class="auth-sahifa">
+        <div style="text-align:center;margin-bottom:28px;">
+            <div style="font-size:36px;margin-bottom:10px;">👋</div>
+            <h1 style="font-size:22px;font-weight:800;letter-spacing:-.3px;">Xush kelibsiz!</h1>
+            <p style="color:#888;font-size:13px;margin-top:6px;">Davom etish uchun kiring</p>
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+            <label for="id_username">Login</label>
+            <input type="text"
+                   name="username"
+                   id="id_username"
+                   class="input"
+                   required
+                   autofocus
+                   placeholder="Login yoki email">
+
+            <label for="id_password">Parol</label>
+            <input type="password"
+                   name="password"
+                   id="id_password"
+                   class="input"
+                   required
+                   placeholder="••••••••">
+
+            {% if form.non_field_errors %}
+            <div class="xabar error" style="margin-bottom:14px;border-radius:9px;">
+                {{ form.non_field_errors|striptags }}
+            </div>
+            {% endif %}
+
+            <button type="submit" class="submit-btn">Kirish</button>
+        </form>
+
+        <p class="auth-link">
+            Akkountingiz yo'qmi?
+            <a href="{% url 'menu_app:royxat' %}">Ro'yxatdan o'tish</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

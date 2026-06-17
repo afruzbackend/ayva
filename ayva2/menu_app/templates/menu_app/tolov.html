@@ -1,0 +1,47 @@
+{% extends 'menu_app/base.html' %}
+{% block title %}To'lov — Ayva{% endblock %}
+
+{% block content %}
+<div class="savatcha-sahifa">
+    <h1 class="sahifa-sarlavha">Buyurtmani rasmiylashtirish</h1>
+
+    <div class="buyurtma-karta" style="margin-bottom:18px;">
+        <div style="font-weight:800;font-size:14px;margin-bottom:14px;
+                    display:flex;align-items:center;gap:8px;">
+            🛒 Buyurtma tarkibi
+        </div>
+        {% for item in savatcha %}
+        <div class="buyurtma-qator-mini">
+            <span>{{ item.mahsulot.nomi }} × {{ item.soni }}</span>
+            <span>{{ item.jami|floatformat:0 }} so'm</span>
+        </div>
+        {% endfor %}
+        <div class="buyurtma-jami-mini">
+            <span>Jami:</span>
+            <span>{{ savatcha.jami_narx|floatformat:0 }} so'm</span>
+        </div>
+    </div>
+
+    <div class="buyurtma-karta">
+        <div style="font-weight:800;font-size:14px;margin-bottom:16px;
+                    display:flex;align-items:center;gap:8px;">
+            📝 Ma'lumotlaringiz
+        </div>
+        <form method="post">
+            {% csrf_token %}
+            {% for field in form %}
+            <div style="margin-bottom:4px;">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                <p class="xato-matn">{{ field.errors|striptags }}</p>
+                {% endif %}
+            </div>
+            {% endfor %}
+            <button type="submit" class="submit-btn" style="margin-top:12px;">
+                ✓ Buyurtmani tasdiqlash
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

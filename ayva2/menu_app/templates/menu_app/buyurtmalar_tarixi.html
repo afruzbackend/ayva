@@ -1,0 +1,47 @@
+{% extends 'menu_app/base.html' %}
+{% block title %}Buyurtmalarim — Ayva{% endblock %}
+
+{% block content %}
+<div class="savatcha-sahifa">
+    <h1 class="sahifa-sarlavha">Buyurtmalarim</h1>
+
+    {% if buyurtmalar %}
+    {% for b in buyurtmalar %}
+    <div class="buyurtma-karta">
+        <div class="buyurtma-sarlavha">
+            <div>
+                <div class="buyurtma-id">Buyurtma #{{ b.id }}</div>
+                <div class="buyurtma-sana">{{ b.yaratilgan|date:"d.m.Y H:i" }}</div>
+            </div>
+            <span class="holat-belgi holat-{{ b.holat }}">
+                {{ b.get_holat_display }}
+            </span>
+        </div>
+
+        {% for q in b.qatorlar.all %}
+        <div class="buyurtma-qator-mini">
+            <span>{{ q.nomi }} × {{ q.soni }}</span>
+            <span>{{ q.jami|floatformat:0 }} so'm</span>
+        </div>
+        {% endfor %}
+
+        <div class="buyurtma-jami-mini">
+            <span>Jami:</span>
+            <span>{{ b.jami|floatformat:0 }} so'm</span>
+        </div>
+    </div>
+    {% endfor %}
+
+    {% else %}
+    <div class="bosh-savatcha">
+        <div class="emoji">📋</div>
+        <p>Hali buyurtmalar yo'q</p>
+        <a href="{% url 'menu_app:menu' %}"
+           class="tolov-btn"
+           style="display:inline-block;width:auto;padding:13px 36px;">
+            Menuga o'tish
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

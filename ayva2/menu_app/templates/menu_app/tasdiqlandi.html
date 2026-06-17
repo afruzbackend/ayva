@@ -1,0 +1,40 @@
+{% extends 'menu_app/base.html' %}
+{% block title %}Buyurtma qabul qilindi — Ayva{% endblock %}
+
+{% block content %}
+<div class="content">
+    <div class="tasdiq-sahifa">
+        <div style="width:88px;height:88px;border-radius:50%;background:#ecfdf5;
+                    display:flex;align-items:center;justify-content:center;
+                    font-size:42px;margin:0 auto 24px;">
+            ✅
+        </div>
+
+        <h1 style="font-size:24px;font-weight:800;margin-bottom:10px;letter-spacing:-.3px;">
+            Rahmat, {{ buyurtma.ism }}!
+        </h1>
+
+        <p style="color:#666;font-size:14px;line-height:1.7;margin-bottom:22px;">
+            Buyurtma <strong style="color:#111;">#{{ buyurtma.id }}</strong> muvaffaqiyatli qabul qilindi.<br>
+            Tez orada <strong style="color:#111;">{{ buyurtma.telefon }}</strong> raqami orqali bog'lanamiz.
+        </p>
+
+        <div style="font-size:24px;font-weight:900;color:#E09415;
+                    margin-bottom:10px;letter-spacing:-.5px;">
+            {{ buyurtma.jami|floatformat:0 }} so'm
+        </div>
+        <p style="font-size:12px;color:#aaa;margin-bottom:32px;">Umumiy summa</p>
+
+        <div style="display:flex;flex-direction:column;gap:10px;">
+            <a href="{% url 'menu_app:buyurtmalar_tarixi' %}" class="tolov-btn">
+                📋 Buyurtmalarni ko'rish
+            </a>
+            <a href="{% url 'menu_app:menu' %}"
+               class="tolov-btn"
+               style="background:#f5f5f5;color:#1a1a1a;box-shadow:none;">
+                Menuga qaytish
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

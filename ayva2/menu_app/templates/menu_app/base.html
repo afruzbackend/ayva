@@ -1,0 +1,212 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Ayva{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'menu_app/style.css' %}">
+</head>
+<body>
+
+<!-- BURGER SIDEBAR -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+<div class="sidebar" id="sidebar">
+    <div class="sidebar-top">
+        <div class="sidebar-logo">
+            <span class="logo-box">AYVA</span>
+            <span>Ayva</span>
+        </div>
+        <button class="sidebar-yop" id="sidebarYop" aria-label="Yopish">✕</button>
+    </div>
+    <nav class="sidebar-nav">
+        <a href="{% url 'menu_app:menu' %}" class="sidebar-link {% if request.resolver_match.url_name == 'menu' %}aktiv{% endif %}">
+            🍽 Menu
+        </a>
+        <a href="{% url 'menu_app:yangiliklar' %}" class="sidebar-link {% if request.resolver_match.url_name == 'yangiliklar' %}aktiv{% endif %}">
+            📢 Yangiliklar
+        </a>
+        {% if user.is_authenticated %}
+        <a href="{% url 'menu_app:buyurtmalar_tarixi' %}" class="sidebar-link {% if request.resolver_match.url_name == 'buyurtmalar_tarixi' %}aktiv{% endif %}">
+            📋 Buyurtmalarim
+        </a>
+        <a href="{% url 'menu_app:profil' %}" class="sidebar-link {% if request.resolver_match.url_name == 'profil' %}aktiv{% endif %}">
+            👤 Profil
+        </a>
+        {% if user.is_staff %}
+        <a href="/admin/" target="_blank" class="sidebar-link">⚙️ Admin ↗</a>
+        {% endif %}
+        <a href="{% url 'menu_app:logout' %}" class="sidebar-link sidebar-chiqish">🚪 Chiqish</a>
+        {% else %}
+        <a href="{% url 'menu_app:login' %}" class="sidebar-link {% if request.resolver_match.url_name == 'login' %}aktiv{% endif %}">
+            🔑 Kirish
+        </a>
+        <a href="{% url 'menu_app:royxat' %}" class="sidebar-link {% if request.resolver_match.url_name == 'royxat' %}aktiv{% endif %}">
+            📝 Ro'yxatdan o'tish
+        </a>
+        {% endif %}
+    </nav>
+</div>
+
+<!-- QIDIRUV MODAL -->
+<div class="qidiruv-overlay" id="qidiruvOverlay"></div>
+<div class="qidiruv-modal" id="qidiruvModal">
+    <form method="get" action="{% url 'menu_app:menu' %}" class="qidiruv-form">
+        <input type="text" name="q" class="qidiruv-input" placeholder="Mahsulot qidiring..."
+               value="{{ request.GET.q|default:'' }}" autofocus>
+        <button type="submit" class="qidiruv-submit">🔍</button>
+        <button type="button" class="qidiruv-bekor" id="qidiruvBekor">✕</button>
+    </form>
+</div>
+
+<!-- TIL DROPDOWN -->
+<div class="til-dropdown" id="tilDropdown">
+    <button class="til-item aktiv-til" onclick="tilTanla('uz', '🇺🇿', \"O'z\")">🇺🇿 O'zbekcha</button>
+    <button class="til-item" onclick="tilTanla('ru', '🇷🇺', 'Рус')">🇷🇺 Русский</button>
+    <button class="til-item" onclick="tilTanla('en', '🏴󠁧󠁢󠁥󠁮󠁧󠁿', 'Eng')">🇺🇸 English</button>
+</div>
+
+<header class="header">
+    <div class="header-chap">
+        <button class="burger" id="burgerBtn" aria-label="Menyu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        <a href="{% url 'menu_app:menu' %}" class="logo">
+            <span class="logo-box">AYVA</span>
+            Ayva
+        </a>
+        <button class="olib-ketish-btn">
+            🛍 <span>Olib ketish</span>
+        </button>
+    </div>
+
+    <nav class="asosiy-nav">
+        <a href="{% url 'menu_app:menu' %}"
+           class="{% if request.resolver_match.url_name == 'menu' %}aktiv{% endif %}">
+            Menu
+        </a>
+        <a href="{% url 'menu_app:yangiliklar' %}"
+           class="{% if request.resolver_match.url_name == 'yangiliklar' %}aktiv{% endif %}">
+            Yangiliklar
+        </a>
+        {% if user.is_authenticated %}
+        <a href="{% url 'menu_app:buyurtmalar_tarixi' %}"
+           class="{% if request.resolver_match.url_name == 'buyurtmalar_tarixi' %}aktiv{% endif %}">
+            Buyurtmalarim
+        </a>
+        <a href="{% url 'menu_app:profil' %}"
+           class="{% if request.resolver_match.url_name == 'profil' %}aktiv{% endif %}">
+            Profil
+        </a>
+        {% if user.is_staff %}
+        <a href="/admin/" target="_blank">Admin ↗</a>
+        {% endif %}
+        <a href="{% url 'menu_app:logout' %}">Chiqish</a>
+        {% else %}
+        <a href="{% url 'menu_app:login' %}"
+           class="{% if request.resolver_match.url_name == 'login' %}aktiv{% endif %}">
+            Kirish
+        </a>
+        <a href="{% url 'menu_app:royxat' %}"
+           class="{% if request.resolver_match.url_name == 'royxat' %}aktiv{% endif %}">
+            Ro'yxat
+        </a>
+        {% endif %}
+    </nav>
+
+    <div class="header-ong">
+        <button class="filial-btn">📍 <span>Filialni tanlang</span> ▾</button>
+        <button class="qidiruv-btn" id="qidiruvBtn" aria-label="Qidirish">🔍</button>
+        <button class="til-btn" id="tilBtn">🇺🇿 <span id="tilMatn">O'z</span> ▾</button>
+        <a href="{% url 'menu_app:savatcha' %}" class="savatcha-btn">
+            🛒 <span>{{ savatcha_jami|default:"0"|floatformat:0 }} so'm</span>
+        </a>
+        {% if user.is_authenticated %}
+        <a href="{% url 'menu_app:profil' %}" class="user-btn" aria-label="Profil">👤</a>
+        {% else %}
+        <a href="{% url 'menu_app:login' %}" class="user-btn" aria-label="Kirish">👤</a>
+        {% endif %}
+    </div>
+</header>
+
+{% if messages %}
+<div class="xabarlar">
+    {% for message in messages %}
+    <div class="xabar {{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+</div>
+{% endif %}
+
+{% block content %}{% endblock %}
+
+<script>
+// === BURGER SIDEBAR ===
+const burgerBtn = document.getElementById('burgerBtn');
+const sidebar = document.getElementById('sidebar');
+const sidebarOverlay = document.getElementById('sidebarOverlay');
+const sidebarYop = document.getElementById('sidebarYop');
+
+function sidebarOch() {
+    sidebar.classList.add('ochiq');
+    sidebarOverlay.classList.add('ochiq');
+    document.body.style.overflow = 'hidden';
+}
+function sidebarYopish() {
+    sidebar.classList.remove('ochiq');
+    sidebarOverlay.classList.remove('ochiq');
+    document.body.style.overflow = '';
+}
+burgerBtn.addEventListener('click', sidebarOch);
+sidebarYop.addEventListener('click', sidebarYopish);
+sidebarOverlay.addEventListener('click', sidebarYopish);
+
+// === QIDIRUV MODAL ===
+const qidiruvBtn = document.getElementById('qidiruvBtn');
+const qidiruvModal = document.getElementById('qidiruvModal');
+const qidiruvOverlay = document.getElementById('qidiruvOverlay');
+const qidiruvBekor = document.getElementById('qidiruvBekor');
+
+function qidiruvOch() {
+    qidiruvModal.classList.add('ochiq');
+    qidiruvOverlay.classList.add('ochiq');
+    setTimeout(() => qidiruvModal.querySelector('input').focus(), 100);
+}
+function qidiruvYop() {
+    qidiruvModal.classList.remove('ochiq');
+    qidiruvOverlay.classList.remove('ochiq');
+}
+qidiruvBtn.addEventListener('click', qidiruvOch);
+qidiruvBekor.addEventListener('click', qidiruvYop);
+qidiruvOverlay.addEventListener('click', qidiruvYop);
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { qidiruvYop(); sidebarYopish(); tilYop(); } });
+
+// === TIL DROPDOWN ===
+const tilBtn = document.getElementById('tilBtn');
+const tilDropdown = document.getElementById('tilDropdown');
+
+function tilYop() { tilDropdown.classList.remove('ochiq'); }
+tilBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    tilDropdown.classList.toggle('ochiq');
+    const rect = tilBtn.getBoundingClientRect();
+    tilDropdown.style.top = (rect.bottom + 8) + 'px';
+    tilDropdown.style.right = (window.innerWidth - rect.right) + 'px';
+});
+document.addEventListener('click', tilYop);
+
+function tilTanla(kod, bayroq, matn) {
+    document.getElementById('tilMatn').textContent = matn;
+    tilBtn.childNodes[0].textContent = bayroq + ' ';
+    tilYop();
+    localStorage.setItem('til', kod);
+}
+// Saqlangan tilni yuklash
+const saqlangan = localStorage.getItem('til');
+if (saqlangan === 'ru') tilTanla('ru', '🇷🇺', 'Рус');
+else if (saqlangan === 'en') tilTanla('en', '🇺🇸', 'Eng');
+</script>
+
+</body>
+</html>
